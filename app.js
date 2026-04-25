@@ -6,8 +6,8 @@
   // so it's safe to commit to a public repo.                                                                                                                                                                  
   // Find them in Supabase dashboard → Settings → API.
   // ============================================================                                                                                                                                              
-  const SUPABASE_URL = 'https://YOUR-PROJECT-ID.supabase.co'
-  const SUPABASE_ANON_KEY = 'YOUR-ANON-KEY'                                                                                                                                                                    
+  const SUPABASE_URL = 'https://jfixrvxylbmhbhpqzyjw.supabase.co'
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmaXhydnh5bGJtaGJocHF6eWp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMzYzOTksImV4cCI6MjA5MjcxMjM5OX0.-Ys0dbX2NEC49N0XL8QKuUI0v_jBw-qtgCdKbhFtvKM'                                                                                                                                                                    
                   
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)                                                                                                                                               
                   
