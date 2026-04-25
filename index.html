@@ -18,16 +18,20 @@
                   
       <section id="auth" class="screen" hidden>                                                                                                                                                                
         <header><p class="brand">Skin intelligence.</p></header>
-        <form id="auth-form" class="form-vertical">                                                                                                                                                            
-          <h1>Sign in.</h1>
-          <p class="muted">A magic link will be sent to your inbox.</p>                                                                                                                                        
-          <label> 
+               
+        <form id="auth-form" class="form-vertical">
+          <h1>Sign in.</h1>                                                                                                                                                                                    
+          <label>
             <span class="visually-hidden">Email</span>                                                                                                                                                         
-            <input type="email" name="email" required placeholder="you@example.com" autocomplete="email">
+            <input type="email" name="email" required placeholder="email" autocomplete="email">
           </label>                                                                                                                                                                                             
-          <button type="submit">Send link</button>
+          <label>
+            <span class="visually-hidden">Password</span>                                                                                                                                                      
+            <input type="password" name="password" required placeholder="password" autocomplete="current-password">
+          </label>                                                                                                                                                                                             
+          <button type="submit">Sign in</button>
           <p class="muted small" id="auth-status"></p>                                                                                                                                                         
-        </form>                                                                                                                                                                                                
+        </form>                                                                                                                                                                                                   
       </section>                                                                                                                                                                                               
                                                                                                                                                                                                                
       <section id="home" class="screen" hidden>
