@@ -1,0 +1,149 @@
+ <!DOCTYPE html>
+  <html lang="en">                                                                                                                                                                                             
+  <head>          
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0e0c0a">                                                                                                                                                                
+    <meta name="apple-mobile-web-app-capable" content="yes">                                                                                                                                                   
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">                                                                                                                            
+    <title>Skin intelligence</title>                                                                                                                                                                           
+    <link rel="stylesheet" href="styles.css">                                                                                                                                                                  
+  </head>                                                                                                                                                                                                      
+  <body>
+    <main>                                                                                                                                                                                                     
+                  
+      <section id="loading" class="screen">                                                                                                                                                                    
+        <p class="brand">Skin intelligence.</p>
+      </section>                                                                                                                                                                                               
+                  
+      <section id="auth" class="screen" hidden>                                                                                                                                                                
+        <header><p class="brand">Skin intelligence.</p></header>
+        <form id="auth-form" class="form-vertical">                                                                                                                                                            
+          <h1>Sign in.</h1>
+          <p class="muted">A magic link will be sent to your inbox.</p>                                                                                                                                        
+          <label> 
+            <span class="visually-hidden">Email</span>                                                                                                                                                         
+            <input type="email" name="email" required placeholder="you@example.com" autocomplete="email">
+          </label>                                                                                                                                                                                             
+          <button type="submit">Send link</button>
+          <p class="muted small" id="auth-status"></p>                                                                                                                                                         
+        </form>                                                                                                                                                                                                
+      </section>                                                                                                                                                                                               
+                                                                                                                                                                                                               
+      <section id="home" class="screen" hidden>
+        <header class="row-between">
+          <p class="brand">Skin intelligence.</p>
+          <button class="link-button" id="signout">Sign out</button>                                                                                                                                           
+        </header>                                                                                                                                                                                              
+        <h1 class="home-title">Today.</h1>                                                                                                                                                                     
+        <p class="muted small" id="today-date"></p>                                                                                                                                                            
+        <nav class="menu">                                                                                                                                                                                     
+          <button class="menu-item" data-screen="daily">
+            <span class="menu-eyebrow">01</span>                                                                                                                                                               
+            <span class="menu-label">Daily check-in</span>
+            <span class="menu-hint">Severity, itch, stress, products.</span>                                                                                                                                   
+          </button>
+          <button class="menu-item" data-screen="meal">                                                                                                                                                        
+            <span class="menu-eyebrow">02</span>
+            <span class="menu-label">Log a meal</span>                                                                                                                                                         
+            <span class="menu-hint">Time, description, triggers.</span>                                                                                                                                        
+          </button>
+          <button class="menu-item" data-screen="photo">                                                                                                                                                       
+            <span class="menu-eyebrow">03</span>                                                                                                                                                               
+            <span class="menu-label">Add a photo</span>
+            <span class="menu-hint">Skin, food, or a cream.</span>                                                                                                                                             
+          </button>                                                                                                                                                                                            
+        </nav>
+      </section>                                                                                                                                                                                               
+                  
+      <section id="screen-daily" class="screen" hidden>                                                                                                                                                        
+        <header><button class="link-button back">← Back</button></header>
+        <form id="form-daily" class="form-vertical">                                                                                                                                                           
+          <h1>Daily check-in.</h1>
+          <fieldset>                                                                                                                                                                                           
+            <legend>Eczema severity</legend>
+            <p class="muted small">0 clear · 5 severe</p>                                                                                                                                                      
+            <div class="scale" data-scale="eczema_severity"></div>                                                                                                                                             
+          </fieldset>                                                                                                                                                                                          
+          <fieldset>                                                                                                                                                                                           
+            <legend>Itch level</legend>
+            <p class="muted small">0 none · 5 unbearable</p>                                                                                                                                                   
+            <div class="scale" data-scale="itch_level"></div>
+          </fieldset>                                                                                                                                                                                          
+          <fieldset>
+            <legend>Stress level</legend>                                                                                                                                                                      
+            <p class="muted small">0 calm · 5 overwhelmed</p>
+            <div class="scale" data-scale="stress_level"></div>                                                                                                                                                
+          </fieldset>
+          <fieldset>                                                                                                                                                                                           
+            <legend>Body parts affected</legend>
+            <div class="chips" data-chips="body_parts_affected"></div>                                                                                                                                         
+          </fieldset>
+          <fieldset>                                                                                                                                                                                           
+            <legend>Topicals used today</legend>
+            <div class="chips" data-chips="topicals_used"></div>                                                                                                                                               
+          </fieldset>
+          <label>                                                                                                                                                                                              
+            <span>Menstrual day</span>
+            <input type="number" name="menstrual_day" min="1" max="60" placeholder="optional">                                                                                                                 
+          </label>
+          <label>                                                                                                                                                                                              
+            <span>Notes</span>
+            <textarea name="notes" rows="3" placeholder="anything else worth remembering"></textarea>                                                                                                          
+          </label>                                                                                                                                                                                             
+          <button type="submit">Save</button>
+        </form>                                                                                                                                                                                                
+      </section>  
+
+      <section id="screen-meal" class="screen" hidden>                                                                                                                                                         
+        <header><button class="link-button back">← Back</button></header>
+        <form id="form-meal" class="form-vertical">                                                                                                                                                            
+          <h1>Log a meal.</h1>
+          <label>
+            <span>Time</span>                                                                                                                                                                                  
+            <input type="time" name="time" required>
+          </label>                                                                                                                                                                                             
+          <label> 
+            <span>What you ate</span>
+            <textarea name="description" rows="2" required placeholder="oat porridge with blueberries"></textarea>                                                                                             
+          </label>                                                                                                                                                                                             
+          <fieldset>                                                                                                                                                                                           
+            <legend>Tags</legend>                                                                                                                                                                              
+            <p class="muted small">Pick every one that applies.</p>
+            <div class="chips" data-chips="food_tags"></div>                                                                                                                                                   
+          </fieldset>                                                                                                                                                                                          
+          <button type="submit">Save</button>                                                                                                                                                                  
+        </form>                                                                                                                                                                                                
+      </section>  
+
+      <section id="screen-photo" class="screen" hidden>
+        <header><button class="link-button back">← Back</button></header>
+        <form id="form-photo" class="form-vertical">                                                                                                                                                           
+          <h1>Add a photo.</h1>
+          <fieldset>                                                                                                                                                                                           
+            <legend>Of what?</legend>
+            <div class="chips single" data-chips="photo_kind"></div>                                                                                                                                           
+          </fieldset>
+          <label>                                                                                                                                                                                              
+            <span>Photo</span>
+            <input type="file" name="file" accept="image/*" required>                                                                                                                                          
+          </label>
+          <label>
+            <span>Notes</span>
+            <textarea name="notes" rows="2" placeholder="optional"></textarea>                                                                                                                                 
+          </label>
+          <button type="submit">Upload</button>                                                                                                                                                                
+        </form>   
+      </section>                                                                                                                                                                                               
+   
+      <section id="screen-saved" class="screen center" hidden>                                                                                                                                                 
+        <p class="brand-large">Saved.</p>
+        <p class="muted">Your data is recorded.</p>                                                                                                                                                            
+        <button class="link-button" id="back-home">Home</button>
+      </section>                                                                                                                                                                                               
+                  
+    </main>                                                                                                                                                                                                    
+    <script type="module" src="app.js"></script>
+  </body>
+  </html>
+
