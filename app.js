@@ -92,17 +92,15 @@
     const { data: { user } } = await supabase.auth.getUser()
     return user                                                                                                                                                                                                
   }
-                                                                                                                                                                                                               
-  async function handleAuthSubmit(e) {
-    e.preventDefault()
-    const status = $('#auth-status'); status.textContent = 'Sending…'                                                                                                                                          
-    const email = e.target.email.value.trim()
-    const { error } = await supabase.auth.signInWithOtp({                                                                                                                                                      
-      email,      
-      options: { emailRedirectTo: window.location.origin }                                                                                                                                                     
-    })                                                                                                                                                                                                         
-    status.textContent = error ? error.message : 'Check your inbox. Click the link to sign in.'
+async function handleAuthSubmit(e) {
+    e.preventDefault()                                                                                                                                                                                         
+    const status = $('#auth-status'); status.textContent = 'Signing in…'
+    const email = e.target.email.value.trim()                                                                                                                                                                  
+    const password = e.target.password.value
+    const { error } = await supabase.auth.signInWithPassword({ email, password })                                                                                                                              
+    if (error) status.textContent = error.message
   }                                                                                                                                                                                                            
+                                                                                                                                                                                                                
                   
   async function handleSignOut() {                                                                                                                                                                             
     await supabase.auth.signOut()
