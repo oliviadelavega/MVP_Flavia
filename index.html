@@ -294,9 +294,15 @@
     <script type="module">                                                                                                                                                                                     
       import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4'
                                                                                                                                                                                                                
-      const SUPABASE_URL = 'https://jfixrvxylbmhbhpqzyjw.supabase.co'                                                                                                                                          
-      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmaXhydnh5bGJtaGJocHF6eWp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMzYzOTksImV4cCI6MjA5MjcxMjM5OX0.-Ys0dbX2N
-  EC49N0XL8QKuUI0v_jBw-qtgCdKbhFtvKM'                                                                                                                                                                          
+const SUPABASE_URL = 'https://jfixrvxylbmhbhpqzyjw.supabase.co'                                                                                                                                          
+      const SUPABASE_ANON_KEY =                                                                                                                                                                                
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' +                                                                                                                                                               
+        '.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp' +                                                                                                                                                               
+        'maXhydnh5bGJtaGJocHF6eWp3Iiwicm9sZSI' +                                                                                                                                                               
+        '6ImFub24iLCJpYXQiOjE3NzcxMzYzOTksImV' +                                                                                                                                                               
+        '4cCI6MjA5MjcxMjM5OX0' +                                                                                                                                                                               
+        '.-Ys0dbX2NEC49N0XL8QKuUI0v_jBw-qtgCd' +                                                                                                                                                               
+        'KbhFtvKM'                                                                                                                                                                            
                   
       const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)                                                                                                                                                 
                   
