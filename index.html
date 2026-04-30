@@ -220,6 +220,35 @@
     input:focus, textarea:focus { border-bottom-color: var(--accent); }
     textarea { resize: vertical; line-height: 1.5; }
     input[type="file"] { padding: 10px 0; color: var(--muted); }
+    .mic-btn {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: 1px solid var(--border-2);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      transition: color 180ms ease, border-color 180ms ease, background 180ms ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .mic-btn:hover { color: var(--text); border-color: var(--accent); }
+    .mic-btn:active { transform: scale(0.97); }
+    .mic-btn .mic-icon { width: 14px; height: 14px; fill: currentColor; }
+    .mic-btn.listening {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: rgba(203, 138, 82, 0.08);
+    }
+    .mic-btn.listening .mic-icon { animation: micPulse 1s ease-in-out infinite; }
+    @keyframes micPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
     .scale {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
@@ -340,6 +369,93 @@
       80%  { opacity: 1; }
       100% { opacity: 0; }
     }
+    .overview-list {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      padding-top: 8px;
+    }
+    .overview-empty,
+    .overview-loading {
+      text-align: center;
+      color: var(--muted);
+      padding: 40px 0;
+      font-family: var(--serif);
+      font-style: italic;
+    }
+    .overview-day {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .overview-day-header {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 16px;
+      color: var(--muted);
+      letter-spacing: -0.005em;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--border);
+    }
+    .overview-empty-day {
+      color: var(--faint);
+      font-size: 14px;
+      padding: 6px 0;
+    }
+    .overview-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .overview-card-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-family: var(--serif);
+      font-size: 17px;
+      letter-spacing: -0.01em;
+    }
+    .overview-card-title .kind {
+      font-style: italic;
+      color: var(--accent);
+      font-size: 13px;
+    }
+    .overview-metrics {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .overview-metric {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .overview-metric-label {
+      font-size: 11px;
+      color: var(--faint);
+      text-transform: lowercase;
+      letter-spacing: 0.04em;
+    }
+    .overview-metric-value {
+      font-family: var(--serif);
+      font-size: 18px;
+      letter-spacing: -0.01em;
+    }
+    .overview-detail {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .overview-detail .label {
+      font-family: var(--serif);
+      font-style: italic;
+      color: var(--faint);
+      margin-right: 6px;
+    }
   </style>
 </head>
 <body>
@@ -382,37 +498,37 @@
       <p class="muted small" id="today-date"></p>
     </div>
     <nav class="menu">
-      <button class="menu-item" data-screen="daily">
+      <button class="menu-item" data-screen="symptoms">
         <span class="menu-eyebrow">01</span>
         <span class="menu-content">
-          <span class="menu-label">Daily check-in</span>
-          <span class="menu-hint">Severity, itch, stress, products.</span>
+          <span class="menu-label">Symptoms</span>
+          <span class="menu-hint">Severity, itch, stress, body, topicals.</span>
         </span>
         <span class="menu-arrow">&rarr;</span>
       </button>
       <button class="menu-item" data-screen="meal">
         <span class="menu-eyebrow">02</span>
         <span class="menu-content">
-          <span class="menu-label">Log a meal</span>
-          <span class="menu-hint">Time, description, tags, optional photo.</span>
+          <span class="menu-label">Meals</span>
+          <span class="menu-hint">What you ate, when, and tags.</span>
         </span>
         <span class="menu-arrow">&rarr;</span>
       </button>
-      <button class="menu-item" data-screen="photo">
+      <button class="menu-item" data-screen="overview">
         <span class="menu-eyebrow">03</span>
         <span class="menu-content">
-          <span class="menu-label">Add a photo</span>
-          <span class="menu-hint">Skin or a product you're using.</span>
+          <span class="menu-label">Overview</span>
+          <span class="menu-hint">The last two weeks, day by day.</span>
         </span>
         <span class="menu-arrow">&rarr;</span>
       </button>
     </nav>
   </section>
 
-  <section id="screen-daily" class="screen">
+  <section id="screen-symptoms" class="screen">
     <header><button class="link-button back" data-back>&larr; Back</button></header>
-    <form id="form-daily" class="form-vertical">
-      <h1>Daily check-in.</h1>
+    <form id="form-symptoms" class="form-vertical">
+      <h1>Symptoms.</h1>
       <fieldset>
         <legend>Eczema severity</legend>
         <div class="scale" data-scale="eczema_severity"></div>
@@ -459,49 +575,41 @@
   <section id="screen-meal" class="screen">
     <header><button class="link-button back" data-back>&larr; Back</button></header>
     <form id="form-meal" class="form-vertical">
-      <h1>Log a meal.</h1>
-      <label>
-        <span>Time</span>
-        <input type="time" name="time" required>
-      </label>
+      <h1>Meals.</h1>
       <label>
         <span>What you ate</span>
         <textarea name="description" rows="2" required
           placeholder="oat porridge with blueberries"></textarea>
+        <button type="button" id="meal-mic" class="mic-btn" hidden
+          aria-label="Speak instead of typing">
+          <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3z"/>
+            <path d="M19 11a1 1 0 1 0-2 0 5 5 0 0 1-10 0 1 1 0 1 0-2 0 7 7 0 0 0 6 6.92V20H8a1 1 0 1 0 0 2h8a1 1 0 1 0 0-2h-3v-2.08A7 7 0 0 0 19 11z"/>
+          </svg>
+          <span class="mic-label">tap to speak</span>
+        </button>
+      </label>
+      <label>
+        <span>When</span>
+        <input type="datetime-local" name="logged_at" required>
       </label>
       <fieldset>
         <legend>Tags</legend>
         <p class="muted small">Pick every one that applies.</p>
         <div class="chips" data-chips="food_tags"></div>
       </fieldset>
-      <label>
-        <span>Photo (optional)</span>
-        <input type="file" name="photo" accept="image/*">
-      </label>
       <button type="submit">Save</button>
       <p class="status-line err" data-status></p>
     </form>
   </section>
 
-  <section id="screen-photo" class="screen">
+  <section id="screen-overview" class="screen">
     <header><button class="link-button back" data-back>&larr; Back</button></header>
-    <form id="form-photo" class="form-vertical">
-      <h1>Add a photo.</h1>
-      <fieldset>
-        <legend>Of what?</legend>
-        <div class="chips single" data-chips="photo_kind"></div>
-      </fieldset>
-      <label>
-        <span>Photo</span>
-        <input type="file" name="file" accept="image/*" required>
-      </label>
-      <label>
-        <span>Notes</span>
-        <textarea name="notes" rows="2" placeholder="optional"></textarea>
-      </label>
-      <button type="submit">Upload</button>
-      <p class="status-line err" data-status></p>
-    </form>
+    <h1>Overview.</h1>
+    <p class="muted small" style="margin-top: 6px;">The last two weeks of symptoms and meals.</p>
+    <div id="overview-body" class="overview-list">
+      <p class="overview-loading">loading…</p>
+    </div>
   </section>
 
   <section id="screen-saved" class="screen center">
@@ -527,21 +635,47 @@
 </script>
 
 <script type="module">
-import { createClient }
-  from 'https://esm.sh/@supabase/supabase-js@2.45.4'
+import { initializeApp }
+  from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js'
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+} from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js'
+import {
+  getFirestore,
+  doc,
+  collection,
+  setDoc,
+  addDoc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  limit,
+  Timestamp,
+  serverTimestamp,
+} from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js'
 
-const SUPABASE_URL = 'https://jfixrvxylbmhbhpqzyjw.supabase.co'
+// ============================================================
+// Configuration — paste the firebaseConfig from the Firebase
+// console (Project settings → General → Your apps → Web app).
+// ============================================================
+const firebaseConfig = {
+  apiKey: 'AIzaSyBeiifMf8FTgJDO-_ZtU6VqV3THk9_Dt-4',
+  authDomain: 'flavia-e5670.firebaseapp.com',
+  projectId: 'flavia-e5670',
+  storageBucket: 'flavia-e5670.firebasestorage.app',
+  messagingSenderId: '122439372365',
+  appId: '1:122439372365:web:5401fb354a7152b06e9604',
+  measurementId: 'G-SV71XGP1B3',
+}
 
-const SUPABASE_ANON_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' +
-  '.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp' +
-  'maXhydnh5bGJtaGJocHF6eWp3Iiwicm9sZSI' +
-  '6ImFub24iLCJpYXQiOjE3NzcxMzYzOTksImV' +
-  '4cCI6MjA5MjcxMjM5OX0' +
-  '.-Ys0dbX2NEC49N0XL8QKuUI0v_jBw-qtgCd' +
-  'KbhFtvKM'
-
-const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+const app = initializeApp(firebaseConfig)
+const auth = getAuth(app)
+const db = getFirestore(app)
 
 const VOCAB = {
   body_parts_affected: [
@@ -554,14 +688,10 @@ const VOCAB = {
     'prescription_cream', 'other',
   ],
   food_tags: [
-    'dairy', 'gluten', 'sugar', 'refined_carbs',
-    'spicy', 'alcohol', 'caffeine', 'citrus',
-    'nuts', 'eggs', 'soy', 'nightshades',
-    'high_histamine', 'fermented', 'processed',
-    'seed_oils', 'red_meat', 'fish', 'shellfish',
-    'chocolate', 'tea',
+    'dairy', 'gluten', 'egg', 'nut',
+    'soy', 'seafood', 'spicy', 'processed',
+    'sugar', 'alcohol', 'vegetables', 'fruits',
   ],
-  photo_kind: ['skin', 'product'],
   on_period: ['no', 'yes'],
 }
 
@@ -659,6 +789,30 @@ function getChips(name) {
   return Array.from(document.querySelectorAll(sel))
     .map(function(b){ return b.dataset.value })
 }
+function setScale(name, value) {
+  const el = $('.scale[data-scale="' + name + '"]')
+  if (!el) return
+  el.querySelectorAll('button').forEach(function(b){
+    b.classList.remove('active')
+  })
+  if (value == null) {
+    delete el.dataset.selected
+    return
+  }
+  const target = el.querySelector('button[data-value="' + value + '"]')
+  if (target) {
+    target.classList.add('active')
+    el.dataset.selected = value
+  }
+}
+function setChips(name, values) {
+  const el = $('.chips[data-chips="' + name + '"]')
+  if (!el) return
+  const set = new Set(values || [])
+  el.querySelectorAll('button').forEach(function(b){
+    b.classList.toggle('active', set.has(b.dataset.value))
+  })
+}
 function resetForm(formId) {
   const f = document.getElementById(formId)
   f.reset()
@@ -679,26 +833,25 @@ async function handleAuthSubmit(e) {
   setBusy(btn, true, 'signing in…')
   const email = e.target.email.value.trim()
   const password = e.target.password.value
-  const result = await sb.auth.signInWithPassword({
-    email: email, password: password,
-  })
-  setBusy(btn, false)
-  if (result.error) {
-    status.textContent = result.error.message
-    return
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, password)
+    currentUser = cred.user
+    $('#user-email').textContent = cred.user.email
+    show('home')
+  } catch (error) {
+    status.textContent = error.message
+  } finally {
+    setBusy(btn, false)
   }
-  currentUser = result.data.user
-  $('#user-email').textContent = result.data.user.email
-  show('home')
 }
 
 async function handleSignOut() {
-  await sb.auth.signOut()
+  await signOut(auth)
   currentUser = null
   show('auth')
 }
 
-async function submitDaily(e) {
+async function submitSymptoms(e) {
   e.preventDefault()
   const btn = e.target.querySelector('button[type="submit"]')
   setStatus(e.target, '')
@@ -713,27 +866,30 @@ async function submitDaily(e) {
   const onPeriod = periodChoice == null
     ? null
     : periodChoice === 'yes'
+  const date = todayString()
   const row = {
-    user_id: currentUser.id,
-    date: todayString(),
-    eczema_severity: getScale('eczema_severity'),
-    itch_level: getScale('itch_level'),
-    stress_level: getScale('stress_level'),
-    on_period: onPeriod,
-    body_parts_affected: getChips('body_parts_affected'),
-    topicals_used: getChips('topicals_used'),
+    eczemaSeverity: getScale('eczema_severity'),
+    itchLevel: getScale('itch_level'),
+    stressLevel: getScale('stress_level'),
+    onPeriod: onPeriod,
+    bodyPartsAffected: getChips('body_parts_affected'),
+    topicalsUsed: getChips('topicals_used'),
     notes: (fd.get('notes') || '').trim() || null,
-    updated_at: new Date().toISOString(),
+    updatedAt: serverTimestamp(),
   }
-  const result = await sb
-    .from('manual_log')
-    .upsert(row, { onConflict: 'user_id,date' })
-  setBusy(btn, false)
-  if (result.error) {
-    setStatus(e.target, result.error.message)
+  try {
+    await setDoc(
+      doc(db, 'users', currentUser.uid, 'symptomLogs', date),
+      row,
+      { merge: true }
+    )
+  } catch (error) {
+    setBusy(btn, false)
+    setStatus(e.target, error.message)
     return
   }
-  resetForm('form-daily')
+  setBusy(btn, false)
+  resetForm('form-symptoms')
   flashSaved()
 }
 
@@ -748,92 +904,304 @@ async function submitMeal(e) {
     return
   }
   const fd = new FormData(e.target)
-  let photoPath = null
-  const photoFile = fd.get('photo')
-  if (photoFile && photoFile.size && photoFile.size > 0) {
-    const ext = (photoFile.name.split('.').pop() || 'jpg')
-      .toLowerCase()
-    photoPath = currentUser.id + '/' + todayString()
-      + '/meal-' + Date.now() + '.' + ext
-    const up = await sb.storage
-      .from('photos')
-      .upload(photoPath, photoFile, {
-        contentType: photoFile.type,
-      })
-    if (up.error) {
-      setBusy(btn, false)
-      setStatus(e.target, up.error.message)
-      return
-    }
-  }
-  const row = {
-    user_id: currentUser.id,
-    date: todayString(),
-    time: fd.get('time'),
-    description: fd.get('description'),
-    tags: getChips('food_tags'),
-    photo_storage_path: photoPath,
-  }
-  const result = await sb.from('food_log').insert(row)
-  setBusy(btn, false)
-  if (result.error) {
-    setStatus(e.target, result.error.message)
+  const description = (fd.get('description') || '').toString().trim()
+  const loggedAtRaw = fd.get('logged_at')
+  const loggedDate = loggedAtRaw ? new Date(loggedAtRaw) : new Date()
+  if (isNaN(loggedDate.getTime())) {
+    setBusy(btn, false)
+    setStatus(e.target, 'Pick a valid date and time.')
     return
   }
+  const row = {
+    description: description || null,
+    tags: getChips('food_tags'),
+    loggedAt: Timestamp.fromDate(loggedDate),
+    createdAt: serverTimestamp(),
+  }
+  try {
+    await addDoc(
+      collection(db, 'users', currentUser.uid, 'meals'),
+      row
+    )
+  } catch (error) {
+    setBusy(btn, false)
+    setStatus(e.target, error.message)
+    return
+  }
+  setBusy(btn, false)
   resetForm('form-meal')
+  setMealDefaultTime()
   flashSaved()
 }
 
-async function submitPhoto(e) {
-  e.preventDefault()
-  const btn = e.target.querySelector('button[type="submit"]')
-  setStatus(e.target, '')
-  setBusy(btn, true, 'uploading…')
-  if (!currentUser) {
-    setBusy(btn, false)
-    setStatus(e.target, 'Session expired — sign out and back in.')
-    return
+function setupVoice() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition
+  const btn = $('#meal-mic')
+  const ta = $('#form-meal textarea[name="description"]')
+  if (!SR || !btn || !ta) return
+  const label = btn.querySelector('.mic-label')
+  btn.hidden = false
+
+  let rec = null
+  let listening = false
+  let baseText = ''
+
+  function setIdle() {
+    listening = false
+    btn.classList.remove('listening')
+    label.textContent = 'tap to speak'
   }
-  const fd = new FormData(e.target)
-  const file = fd.get('file')
-  const kinds = getChips('photo_kind')
-  if (!kinds.length) {
-    setBusy(btn, false)
-    setStatus(e.target, 'Pick: skin or product.')
-    return
-  }
-  const kind = kinds[0]
-  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
-  const path = currentUser.id + '/' + todayString()
-    + '/' + kind + '-' + Date.now() + '.' + ext
-  const up = await sb.storage
-    .from('photos')
-    .upload(path, file, { contentType: file.type })
-  if (up.error) {
-    setBusy(btn, false)
-    setStatus(e.target, up.error.message)
-    return
-  }
-  const ins = await sb.from('photos').insert({
-    user_id: currentUser.id,
-    date: todayString(),
-    kind: kind,
-    storage_path: path,
-    notes: (fd.get('notes') || '').trim() || null,
+
+  btn.addEventListener('click', function(){
+    if (listening) { try { rec.stop() } catch (_) {} return }
+    rec = new SR()
+    rec.lang = navigator.language || 'en-US'
+    rec.interimResults = true
+    rec.continuous = true
+    baseText = ta.value.trim()
+    rec.addEventListener('result', function(e){
+      let interim = ''
+      let finalChunk = ''
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const t = e.results[i][0].transcript
+        if (e.results[i].isFinal) finalChunk += t
+        else interim += t
+      }
+      if (finalChunk) {
+        baseText = (baseText ? baseText + ' ' : '') + finalChunk.trim()
+      }
+      ta.value = (baseText + (interim ? ' ' + interim : '')).trim()
+    })
+    rec.addEventListener('end', setIdle)
+    rec.addEventListener('error', function(ev){
+      setIdle()
+      if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') {
+        setStatus($('#form-meal'), 'microphone permission denied')
+      } else if (ev.error !== 'no-speech' && ev.error !== 'aborted') {
+        setStatus($('#form-meal'), 'voice input error: ' + ev.error)
+      }
+    })
+    try {
+      rec.start()
+      listening = true
+      btn.classList.add('listening')
+      label.textContent = 'listening… tap to stop'
+      setStatus($('#form-meal'), '')
+    } catch (_) { setIdle() }
   })
-  setBusy(btn, false)
-  if (ins.error) {
-    setStatus(e.target, ins.error.message)
+}
+
+function setMealDefaultTime() {
+  const input = $('#form-meal input[name="logged_at"]')
+  if (!input) return
+  const now = new Date()
+  const pad = (n) => String(n).padStart(2, '0')
+  const local = now.getFullYear() + '-' +
+    pad(now.getMonth() + 1) + '-' +
+    pad(now.getDate()) + 'T' +
+    pad(now.getHours()) + ':' +
+    pad(now.getMinutes())
+  input.value = local
+}
+
+async function loadTodaySymptoms() {
+  const form = $('#form-symptoms')
+  if (!form || !currentUser) return
+  resetForm('form-symptoms')
+  try {
+    const snap = await getDoc(
+      doc(db, 'users', currentUser.uid, 'symptomLogs', todayString())
+    )
+    if (!snap.exists()) return
+    const log = snap.data()
+    setScale('eczema_severity', log.eczemaSeverity)
+    setScale('itch_level', log.itchLevel)
+    setScale('stress_level', log.stressLevel)
+    if (log.onPeriod === true) setChips('on_period', ['yes'])
+    else if (log.onPeriod === false) setChips('on_period', ['no'])
+    setChips('body_parts_affected', log.bodyPartsAffected)
+    setChips('topicals_used', log.topicalsUsed)
+    const notes = form.querySelector('textarea[name="notes"]')
+    if (notes) notes.value = log.notes || ''
+  } catch (error) {
+    setStatus(form, error.message)
+  }
+}
+
+const OVERVIEW_DAYS = 14
+
+function dateKey(d) {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return y + '-' + m + '-' + day
+}
+
+function dayLabel(key) {
+  const parts = key.split('-').map(Number)
+  if (parts.length !== 3) return key
+  const date = new Date(parts[0], parts[1] - 1, parts[2])
+  const today = new Date()
+  const yesterday = new Date()
+  yesterday.setDate(today.getDate() - 1)
+  if (dateKey(today) === key) return 'Today'
+  if (dateKey(yesterday) === key) return 'Yesterday'
+  return date.toLocaleDateString('en-GB', {
+    weekday: 'long', day: 'numeric', month: 'long',
+  }).toLowerCase()
+}
+
+function timeLabel(date) {
+  return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+}
+
+function humanList(tokens) {
+  return (tokens || []).map((t) => t.replace(/_/g, ' ')).join(', ')
+}
+
+function escapeHTML(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;',
+    '"': '&quot;', "'": '&#39;',
+  }[c]))
+}
+
+function metricCell(label, value) {
+  if (value == null) return ''
+  return '<div class="overview-metric">'
+    + '<span class="overview-metric-label">' + label + '</span>'
+    + '<span class="overview-metric-value">' + value + '/5</span>'
+    + '</div>'
+}
+
+function renderSymptomCard(log) {
+  const metrics = metricCell('eczema', log.eczemaSeverity)
+    + metricCell('itch', log.itchLevel)
+    + metricCell('stress', log.stressLevel)
+
+  let parts = ''
+  if (log.bodyPartsAffected && log.bodyPartsAffected.length) {
+    parts += '<div class="overview-detail"><span class="label">affected</span>'
+      + escapeHTML(humanList(log.bodyPartsAffected)) + '</div>'
+  }
+  if (log.topicalsUsed && log.topicalsUsed.length) {
+    parts += '<div class="overview-detail"><span class="label">topicals</span>'
+      + escapeHTML(humanList(log.topicalsUsed)) + '</div>'
+  }
+  if (log.onPeriod === true) {
+    parts += '<div class="overview-detail"><span class="label">period</span>yes</div>'
+  }
+  if (log.notes) {
+    parts += '<div class="overview-detail">' + escapeHTML(log.notes) + '</div>'
+  }
+
+  return '<div class="overview-card">'
+    + '<div class="overview-card-title"><span>Symptoms</span>'
+    + '<span class="kind">check-in</span></div>'
+    + (metrics ? '<div class="overview-metrics">' + metrics + '</div>' : '')
+    + parts
+    + '</div>'
+}
+
+function renderMealCard(meal) {
+  const t = meal.loggedAt && meal.loggedAt.toDate
+    ? meal.loggedAt.toDate()
+    : (meal.loggedAt instanceof Date ? meal.loggedAt : null)
+  const time = t ? timeLabel(t) : ''
+  const desc = meal.description
+    ? '<div class="overview-detail">' + escapeHTML(meal.description) + '</div>'
+    : ''
+  const tags = (meal.tags && meal.tags.length)
+    ? '<div class="overview-detail"><span class="label">tags</span>'
+        + escapeHTML(humanList(meal.tags)) + '</div>'
+    : ''
+  return '<div class="overview-card">'
+    + '<div class="overview-card-title"><span>Meal</span>'
+    + '<span class="kind">' + escapeHTML(time) + '</span></div>'
+    + desc
+    + tags
+    + '</div>'
+}
+
+async function loadOverview() {
+  const body = $('#overview-body')
+  if (!body) return
+  if (!currentUser) {
+    body.innerHTML = '<p class="overview-empty">sign in to see your history.</p>'
     return
   }
-  resetForm('form-photo')
-  flashSaved()
+  body.innerHTML = '<p class="overview-loading">loading…</p>'
+
+  const cutoff = new Date()
+  cutoff.setDate(cutoff.getDate() - OVERVIEW_DAYS)
+
+  try {
+    const symptomsSnap = await getDocs(
+      query(
+        collection(db, 'users', currentUser.uid, 'symptomLogs'),
+        orderBy('__name__', 'desc'),
+        limit(OVERVIEW_DAYS)
+      )
+    )
+    const symptomsByDate = {}
+    symptomsSnap.forEach((d) => { symptomsByDate[d.id] = d.data() })
+
+    const mealsSnap = await getDocs(
+      query(
+        collection(db, 'users', currentUser.uid, 'meals'),
+        where('loggedAt', '>', Timestamp.fromDate(cutoff)),
+        orderBy('loggedAt', 'desc')
+      )
+    )
+    const mealsByDate = {}
+    mealsSnap.forEach((d) => {
+      const meal = d.data()
+      const at = meal.loggedAt && meal.loggedAt.toDate
+        ? meal.loggedAt.toDate()
+        : null
+      if (!at) return
+      const key = dateKey(at)
+      if (!mealsByDate[key]) mealsByDate[key] = []
+      mealsByDate[key].push(meal)
+    })
+
+    const days = []
+    for (let i = 0; i < OVERVIEW_DAYS; i++) {
+      const d = new Date()
+      d.setDate(d.getDate() - i)
+      days.push(dateKey(d))
+    }
+
+    const html = days.map((key) => {
+      const symptom = symptomsByDate[key]
+      const meals = mealsByDate[key] || []
+      let inner = ''
+      if (symptom) inner += renderSymptomCard(symptom)
+      meals.forEach((m) => { inner += renderMealCard(m) })
+      if (!inner) {
+        inner = '<p class="overview-empty-day">no entries.</p>'
+      }
+      return '<section class="overview-day">'
+        + '<h2 class="overview-day-header">' + escapeHTML(dayLabel(key)) + '</h2>'
+        + inner
+        + '</section>'
+    }).join('')
+
+    body.innerHTML = html || '<p class="overview-empty">nothing yet.</p>'
+  } catch (error) {
+    body.innerHTML = '<p class="overview-empty err">'
+      + escapeHTML(error.message) + '</p>'
+  }
 }
 
 function wire() {
   $$('.menu-item').forEach(function(b){
     b.addEventListener('click', function(){
-      show('screen-' + b.dataset.screen)
+      const target = b.dataset.screen
+      show('screen-' + target)
+      if (target === 'meal') setMealDefaultTime()
+      if (target === 'overview') loadOverview()
+      if (target === 'symptoms') loadTodaySymptoms()
     })
   })
   $$('[data-back]').forEach(function(b){
@@ -841,31 +1209,22 @@ function wire() {
   })
   $('#signout').addEventListener('click', handleSignOut)
   $('#auth-form').addEventListener('submit', handleAuthSubmit)
-  $('#form-daily').addEventListener('submit', submitDaily)
+  $('#form-symptoms').addEventListener('submit', submitSymptoms)
   $('#form-meal').addEventListener('submit', submitMeal)
-  $('#form-photo').addEventListener('submit', submitPhoto)
+  setupVoice()
 }
 
-async function boot() {
+function boot() {
   buildScales()
   buildChips()
   wire()
   $('#today-date').textContent = todayHuman()
-  const sessionResult = await sb.auth.getSession()
-  const session = sessionResult.data.session
-  currentUser = (session && session.user) || null
-  if (currentUser) {
-    $('#user-email').textContent = currentUser.email
-    show('home')
-  } else {
-    show('auth')
-  }
-  sb.auth.onAuthStateChange(function(event, session){
-    currentUser = (session && session.user) || null
-    if (event === 'SIGNED_IN' && currentUser) {
+  onAuthStateChanged(auth, function(user){
+    currentUser = user || null
+    if (currentUser) {
       $('#user-email').textContent = currentUser.email
       show('home')
-    } else if (event === 'SIGNED_OUT') {
+    } else {
       show('auth')
     }
   })
